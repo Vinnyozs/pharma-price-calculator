@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Average Prices for Medicines</title>
+    <style>
+
+        
+          ::selection { background: transparent; }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0c1013;
+            color: #edf3f1;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #141b20;
+            padding: 70px;
+            border-radius: 50px;
+            border: 6px solid #1f292e;
+
+            box-shadow: 0 4px 13px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #edf3f1;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .subtitle {
+            text-align: center;
+            color: #6cb895;
+            margin-bottom: 30px;
+            font-size: 0.95em;
+        }
+        .search-and-sort {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+            align-items: center;
+        }
+        .search-box {
+            flex: 1;
+            padding: 8px 14px;
+            border: 2px solid #1f292e;
+            border-radius: 10px;
+            font-size: 0.9em;
+            outline: none;
+            background-color: #1a2329;
+            color: #edf3f1;
+            transition: border-color 0.2s;
+        }
+        .search-box:focus {
+            border-color: #6cb895;
+        }
+        .search-box::placeholder {
+            color: #aaa;
+        }
+        .sort-select {
+            padding: 8px 14px;
+            border: 2px solid #1f292e;
+            border-radius: 10px;
+            font-size: 0.9em;
+            outline: none;
+            background-color: #1a2329;
+            color: #edf3f1;
+            cursor: pointer;
+            transition: border-color 0.2s;
+            white-space: nowrap;
+        }
+        .sort-select:focus {
+            border-color: #6cb895;
+        }
+        .sort-select option {
+            background-color: #1a2329;
+            color: #edf3f1;
+        }
+        .medicine-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .medicine-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 25px;
+            border-radius: 20px;
+            background-color: #1a2329;
+            border: 3px solid #1f292e;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            cursor: default;
+        }
+        .medicine-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 25px rgba(108, 184, 149, 0.15);
+            border-color: #6cb895;
+        }
+        .medicine-info {
+            flex: 1;
+        }
+        .medicine-name {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .medicine-link {
+            color: #edf3f1;
+            text-decoration: none;
+        }
+        .medicine-link:hover {
+            color: #6cb895;
+        }
+        .medicine-stats {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-right: 20px;
+        }
+        .avg-price {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #6cb895;
+        }
+        .price-range {
+            font-size: 0.9em;
+            color: #aaa;
+        }
+        .chart-link {
+            background-color: #6cb895;
+            color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 2px solid #548a71;
+            text-decoration: none;
+            font-size: 0.9em;
+            display: inline-block;
+            white-space: nowrap;
+              transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .chart-link:hover {
+
+             transform: scale(1.08);
+            box-shadow: 0 8px 25px rgba(108, 184, 149, 0.15);
+        }
+        .no-results {
+            text-align: center;
+            color: #7f8c8d;
+            padding: 20px;
+            font-style: italic;
+            display: none;
+        }
+        .search-highlight {
+            color: #6cb895;
+            text-shadow: 0 0 8px rgba(108, 184, 149, 0.8), 0 0 16px rgba(108, 184, 149, 0.4);
+            transition: text-shadow 0.2s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Average Prices for Medicines</h1>
+        <p class="subtitle">Average retail prices from January to December — {{ nadac_found }}/{{ nadac_total }} medicines sourced from CMS NADAC</p>
+        <p class="subtitle" style="font-size: 0.85em; color: #888; margin-top: -15px; margin-bottom: 25px;">Last updated: {{ data_date }}</p>
+
+        <div class="search-and-sort">
+            <input type="text" id="searchInput" class="search-box" placeholder="Search medicines...">
+            <select id="sortSelect" class="sort-select">
+                <option value="default">Sort by</option>
+                <option value="alpha" selected>Alphabetical</option>
+                <option value="highest">Highest Price</option>
+                <option value="lowest">Lowest Price</option>
+            </select>
+        </div>
+
+        <div class="medicine-grid" id="medicineGrid">
+                {% for avg in averages %}
+            <div class="medicine-card medicine-row">
+                <div class="medicine-info">
+                    <div class="medicine-name">
+                        <a href="/medicine/{{ loop.index - 1 }}" class="medicine-link">{{ avg.name }}</a>
+                    </div>
+                    <span class="price-range">
+                        ${{ "%.2f"|format(avg.min_price) }} — ${{ "%.2f"|format(avg.max_price) }}
+                    </span>
+                </div>
+                <div class="medicine-stats">
+                    <span class="avg-price">${{ "%.2f"|format(avg.average_price) }}</span>
+                </div>
+                <a href="/medicine/{{ loop.index - 1 }}" class="chart-link">View chart</a>
+            </div>
+                {% endfor %}
+        </div>
+        <p class="no-results" id="noResults">No medicines found matching your search.</p>
+    </div>
+
+    <script>
+        // Store original medicine names so we can reset highlighting
+        var originalNames = {};
+        document.querySelectorAll('.medicine-link').forEach(function(link) {
+            var key = Array.from(document.querySelectorAll('.medicine-link')).indexOf(link);
+            originalNames[key] = link.textContent;
+        });
+
+        var grid = document.getElementById('medicineGrid');
+        var rows = Array.from(document.querySelectorAll('.medicine-row'));
+
+        // Sort functionality
+        function sortMedicines(sortBy) {
+            if (sortBy === 'default') {
+                // Reset to original order by re-reading from the page structure
+                // We just reverse any sorting by keeping DOM order
+                return;
+            }
+
+            var sortedRows = rows.slice();
+            if (sortBy === 'alpha') {
+                sortedRows.sort(function(a, b) {
+                    var nameA = a.querySelector('.medicine-link').textContent.trim().toLowerCase();
+                    var nameB = b.querySelector('.medicine-link').textContent.trim().toLowerCase();
+                    return nameA.localeCompare(nameB);
+                });
+            } else if (sortBy === 'highest') {
+                sortedRows.sort(function(a, b) {
+                    var priceA = parseFloat(a.querySelector('.avg-price').textContent.replace('$', '').replace(',', ''));
+                    var priceB = parseFloat(b.querySelector('.avg-price').textContent.replace('$', '').replace(',', ''));
+                    return priceB - priceA;
+                });
+            } else if (sortBy === 'lowest') {
+                sortedRows.sort(function(a, b) {
+                    var priceA = parseFloat(a.querySelector('.avg-price').textContent.replace('$', '').replace(',', ''));
+                    var priceB = parseFloat(b.querySelector('.avg-price').textContent.replace('$', '').replace(',', ''));
+                    return priceA - priceB;
+                });
+            }
+
+            // Re-append rows in sorted order
+            sortedRows.forEach(function(row) {
+                grid.appendChild(row);
+            });
+
+            // Update rows array to reflect new order
+            rows = Array.from(document.querySelectorAll('.medicine-row'));
+        }
+
+        document.getElementById('sortSelect').addEventListener('change', function() {
+            sortMedicines(this.value);
+        });
+
+        // Sort alphabetically on page load
+        sortMedicines('alpha');
+
+        document.getElementById('searchInput').addEventListener('input', function() {
+            var query = this.value.toLowerCase().trim();
+            var currentRows = document.querySelectorAll('.medicine-row');
+            var visibleCount = 0;
+            var linkIndex = 0;
+            currentRows.forEach(function(row) {
+                var link = row.querySelector('.medicine-link');
+                var name = originalNames[linkIndex] || link.textContent;
+                var nameLower = name.toLowerCase();
+                linkIndex++;
+
+                if (query === '' || nameLower.indexOf(query) !== -1) {
+                    row.style.display = '';
+                    visibleCount++;
+
+                    // Highlight matching characters
+                    if (query.length > 0) {
+                        var highlighted = '';
+                        var searchIdx = 0;
+                        for (var i = 0; i < name.length; i++) {
+                            if (nameLower[i] === query[searchIdx]) {
+                                highlighted += '<span class="search-highlight">' + name[i] + '</span>';
+                                searchIdx++;
+                                if (searchIdx === query.length) {
+                                    // Rest of the name without highlighting
+                                    highlighted += name.substring(i + 1);
+                                    break;
+                                }
+                            } else {
+                                highlighted += name[i];
+                            }
+                        }
+                        link.innerHTML = highlighted;
+                    } else {
+                        // Reset to plain text when search is cleared
+                        link.textContent = name;
+                    }
+                } else {
+                    row.style.display = 'none';
+                    link.textContent = name; // Reset highlighting on hidden rows
+                }
+            });
+            document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
+        });
+
+
+    </script>
+</body>
+</html>

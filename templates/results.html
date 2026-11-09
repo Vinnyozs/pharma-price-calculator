@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Average Prices - Medicine Price Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        h2 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            margin: 5px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+        .btn:hover {
+            opacity: 0.8;
+        }
+        .actions {
+            text-align: center;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #27ae60;
+            color: white;
+        }
+        .avg-card {
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #27ae60;
+        }
+        .avg-card h3 {
+            color: #27ae60;
+            margin-bottom: 5px;
+        }
+        .avg-price {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1> Average Medicine Prices</h1>
+
+        {% for avg in averages %}
+        <div class="avg-card">
+            <h3>{{ avg.name }}</h3>
+            <p>Average Price: <span class="avg-price">${{ "%.2f"|format(avg.average_price) }}</span></p>
+            <p>Based on {{ avg.entries|length }} entries</p>
+        </div>
+
+        <h2>Price History for {{ avg.name }}</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Month</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in avg.entries %}
+                <tr>
+                    <td>{{ entry.month }}</td>
+                    <td>${{ "%.2f"|format(entry.price) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endfor %}
+
+        <div class="actions">
+            <a href="/" class="btn btn-primary">← Back to Home</a>
+        </div>
+    </div>
+</body>
+</html>

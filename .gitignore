@@ -1,0 +1,25 @@
+# Virtual environment
+venv/
+env/
+ENV/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# IDE settings
+.idea/
+*.swp
+*.swo
+
+# Large data/cache files
+nadac_cache.json
+
+# OS files
+.DS_Store
+Thumbs.db

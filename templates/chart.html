@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ name }} - Price Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0c1013;
+            color: #edf3f1;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #141b20;
+            padding: 40px;
+            border-radius: 50px;
+            border: 6px solid #1f292e;
+            box-shadow: 0 4px 13px rgba(0, 0, 0, 0.1);
+        }
+        .back-link {
+            display: inline-block;
+            color: #6cb895;
+            text-decoration: none;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        h1 {
+            color: #edf3f1;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            color: #6cb895;
+            margin-bottom: 30px;
+            font-size: 0.95em;
+        }
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            flex: 1;
+            padding: 25px 20px;
+            border-radius: 20px;
+            text-align: center;
+            background-color: #1a2329;
+            border: 3px solid #1f292e;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            cursor: default;
+        }
+        .stat-card:hover {
+            transform: scale(1.08);
+            box-shadow: 0 8px 25px rgba(108, 184, 149, 0.15);
+        }
+        .stat-card.avg {
+            border-color: #6cb895;
+        }
+        .stat-card.avg:hover {
+            border-color: #8fd4b3;
+        }
+        .stat-card.min {
+            border-color: #548a71;
+        }
+        .stat-card.min:hover {
+            border-color: #6cb895;
+        }
+        .stat-card.max {
+            border-color: #c0392b;
+        }
+        .stat-card.max:hover {
+            border-color: #e74c3c;
+        }
+        .stat-label {
+            font-size: 0.85em;
+            color: #aaa;
+            margin-bottom: 8px;
+        }
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+        .stat-card.avg .stat-value {
+            color: #6cb895;
+        }
+        .stat-card.min .stat-value {
+            color: #548a71;
+        }
+        .stat-card.max .stat-value {
+            color: #e74c3c;
+        }
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-bottom: 30px;
+            background-color: #1a2329;
+            border-radius: 20px;
+            padding: 20px;
+            border: 3px solid #1f292e;
+        }
+        h2 {
+            color: #edf3f1;
+            margin-bottom: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 14px 12px;
+            text-align: left;
+            border-bottom: 1px solid #1f292e;
+        }
+        th {
+            background-color: #1f292e;
+            color: #6cb895;
+        }
+        tr:hover {
+            background-color: #1a2329;
+        }
+        td {
+            color: #edf3f1;
+        }
+        .price-cell {
+            font-weight: bold;
+            color: #6cb895;
+        }
+        .calculator-section {
+            margin-top: 40px;
+            background-color: #1a2329;
+            border-radius: 20px;
+            padding: 30px;
+            border: 3px solid #1f292e;
+        }
+        .calculator-section h2 {
+            color: #6cb895;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+        .calc-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: end;
+            flex-wrap: wrap;
+        }
+        .calc-group {
+            flex: 1;
+            min-width: 150px;
+        }
+        .calc-group label {
+            display: block;
+            color: #aaa;
+            font-size: 0.85em;
+            margin-bottom: 6px;
+        }
+        .calc-group select,
+        .calc-group input {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 2px solid #1f292e;
+            background-color: #141b20;
+            color: #edf3f1;
+            font-size: 0.95em;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .calc-group select:focus,
+        .calc-group input:focus {
+            border-color: #6cb895;
+        }
+        .calc-group select option {
+            background-color: #141b20;
+            color: #edf3f1;
+        }
+        .calc-result {
+            background-color: #141b20;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 15px;
+            border: 2px solid #6cb895;
+        }
+        .calc-result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+        }
+        .calc-result-row:not(:last-child) {
+            border-bottom: 1px solid #1f292e;
+        }
+        .calc-result-label {
+            color: #aaa;
+            font-size: 0.9em;
+        }
+        .calc-result-value {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #6cb895;
+        }
+        .add-to-list-btn {
+            background-color: #6cb895;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 15px;
+            width: 100%;
+            transition: background-color 0.2s, transform 0.2s ease;
+        }
+        .add-to-list-btn:hover {
+            background-color: #548a71;
+            transform: scale(1.02);
+        }
+        .summary-section {
+            margin-top: 20px;
+            background-color: #1a2329;
+            border-radius: 20px;
+            padding: 30px;
+            border: 3px solid #1f292e;
+        }
+        .summary-section h2 {
+            color: #6cb895;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background-color: #141b20;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            border: 2px solid #1f292e;
+        }
+        .summary-item-name {
+            color: #edf3f1;
+            font-weight: bold;
+            font-size: 0.95em;
+        }
+        .summary-item-details {
+            color: #aaa;
+            font-size: 0.8em;
+        }
+        .summary-item-price {
+            color: #6cb895;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        .summary-item-remove {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 1.2em;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+        }
+        .summary-item-remove:hover {
+            background-color: rgba(231, 76, 60, 0.2);
+        }
+        .budget-row {
+            display: flex;
+            gap: 15px;
+            align-items: end;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #141b20;
+            border-radius: 15px;
+            margin-top: 15px;
+            border: 2px solid #6cb895;
+        }
+        .total-label {
+            color: #edf3f1;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .total-value {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .total-value.affordable {
+            color: #6cb895;
+        }
+        .total-value.expensive {
+            color: #e74c3c;
+        }
+        .budget-remaining {
+            text-align: right;
+            margin-top: 8px;
+            font-size: 0.9em;
+        }
+        .budget-remaining.affordable {
+            color: #6cb895;
+        }
+        .budget-remaining.expensive {
+            color: #e74c3c;
+        }
+        .clear-all-btn {
+            background-color: #e74c3c;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 0.95em;
+            cursor: pointer;
+            margin-top: 15px;
+            width: 100%;
+            transition: background-color 0.2s, transform 0.2s ease;
+        }
+        .clear-all-btn:hover {
+            background-color: #c0392b;
+            transform: scale(1.02);
+        }
+        .empty-list-msg {
+            color: #aaa;
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+        }
+        /* Use Case Button */
+        .use-case-btn {
+            display: inline-block;
+            background-color: #6cb895;
+            color: #ffffff;
+            border: 2px solid #548a71;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            cursor: pointer;
+            margin-left: 10px;
+            vertical-align: middle;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .use-case-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 8px 25px rgba(108, 184, 149, 0.15);
+        }
+        /* Use Case Modal */
+        .use-case-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .use-case-modal-overlay.active {
+            display: flex;
+        }
+        .use-case-modal {
+            background-color: #141b20;
+            border: 3px solid #6cb895;
+            border-radius: 20px;
+            padding: 35px;
+            max-width: 550px;
+            width: 90%;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(108, 184, 149, 0.2);
+        }
+        .use-case-modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: color 0.2s, transform 0.2s ease;
+            line-height: 1;
+        }
+        .use-case-modal-close:hover {
+            color: #e74c3c;
+            transform: scale(1.15);
+        }
+        .use-case-modal h3 {
+            color: #6cb895;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        .use-case-modal-text {
+            color: #edf3f1;
+            line-height: 1.7;
+            font-size: 0.95em;
+        }
+        /* Loading Spinner */
+        .use-case-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 0;
+        }
+        .use-case-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #1f292e;
+            border-top: 4px solid #6cb895;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 15px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .use-case-loading-text {
+            color: #aaa;
+            font-size: 0.9em;
+        }
+        .use-case-error {
+            color: #e74c3c;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Back to all medicines</a>
+        <h1> {{ name }}
+            <button class="use-case-btn" id="useCaseBtn">Use Case</button>
+        </h1>
+        <p class="subtitle">Monthly retail price trend for the year — Data sourced from CMS NADAC</p>
+        <p class="subtitle" style="font-size: 0.85em; color: #888; margin-top: -20px; margin-bottom: 25px;">Last updated: {{ data_date }}</p>
+
+        <div class="stats">
+            <div class="stat-card avg">
+                <div class="stat-label">Average Retail Price</div>
+                <div class="stat-value">${{ "%.2f"|format(avg_price) }}</div>
+            </div>
+            <div class="stat-card min">
+                <div class="stat-label">Lowest Price</div>
+                <div class="stat-value">${{ "%.2f"|format(min_price) }}</div>
+            </div>
+            <div class="stat-card max">
+                <div class="stat-label">Highest Price</div>
+                <div class="stat-value">${{ "%.2f"|format(max_price) }}</div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="priceChart"></canvas>
+        </div>
+
+        <!-- Price Calculator Section -->
+        <div class="calculator-section">
+            <h2>💰 Price Calculator</h2>
+            <div class="calc-row">
+                <div class="calc-group">
+                    <label for="inflationToggle">Include Inflation?</label>
+                    <select id="inflationToggle">
+                        <option value="no">No — Current prices</option>
+                        <option value="yes">Yes — 0.6% compound monthly</option>
+                    </select>
+                </div>
+                <div class="calc-group">
+                    <label for="startMonth">Starting Month</label>
+                    <select id="startMonth">
+                        <option value="0">January</option>
+                        <option value="1">February</option>
+                        <option value="2">March</option>
+                        <option value="3">April</option>
+                        <option value="4">May</option>
+                        <option value="5">June</option>
+                        <option value="6">July</option>
+                        <option value="7">August</option>
+                        <option value="8">September</option>
+                        <option value="9">October</option>
+                        <option value="10">November</option>
+                        <option value="11">December</option>
+                    </select>
+                </div>
+                <div class="calc-group">
+                    <label for="endMonth">Ending Month</label>
+                    <select id="endMonth">
+                        <option value="0">January</option>
+                        <option value="1">February</option>
+                        <option value="2">March</option>
+                        <option value="3">April</option>
+                        <option value="4">May</option>
+                        <option value="5">June</option>
+                        <option value="6">July</option>
+                        <option value="7">August</option>
+                        <option value="8">September</option>
+                        <option value="9">October</option>
+                        <option value="10">November</option>
+                        <option value="11">December</option>
+                    </select>
+                </div>
+                <div class="calc-group">
+                    <label for="quantity">Quantity per Month</label>
+                    <input type="number" id="quantity" value="1" min="1" max="100">
+                </div>
+            </div>
+
+            <div class="calc-result" id="calcResult">
+                <div class="calc-result-row">
+                    <span class="calc-result-label">Months in Range</span>
+                    <span class="calc-result-value" id="monthsInRange">1 month</span>
+                </div>
+                <div class="calc-result-row">
+                    <span class="calc-result-label">Price Range</span>
+                    <span class="calc-result-value" id="priceRange">$0.00 — $0.00</span>
+                </div>
+                <div class="calc-result-row" id="inflationRow" style="display: none;">
+                    <span class="calc-result-label">Inflation Adjustment</span>
+                    <span class="calc-result-value" id="inflationAdjustment">+$0.00</span>
+                </div>
+                <div class="calc-result-row">
+                    <span class="calc-result-label">Total ({{ name }}, ×<span id="qtyDisplay">1</span>/month)</span>
+                    <span class="calc-result-value" id="totalPrice">$0.00</span>
+                </div>
+            </div>
+
+            <button class="add-to-list-btn" id="addToListBtn">+ Add to Shopping List</button>
+        </div>
+
+        <!-- Shopping List Summary Section -->
+        <div class="summary-section">
+            <h2>🛒 Shopping List</h2>
+            <div id="shoppingList">
+                <p class="empty-list-msg" id="emptyListMsg">No medicines added yet. Use the calculator above to add items.</p>
+            </div>
+
+            <div class="budget-row">
+                <div class="calc-group">
+                    <label for="budgetInput">Your Budget ($)</label>
+                    <input type="number" id="budgetInput" placeholder="Enter your budget..." min="0" step="0.01">
+                </div>
+            </div>
+
+            <div class="total-row" id="totalRow" style="display: none;">
+                <div>
+                    <span class="total-label">Total Cost</span>
+                    <div class="budget-remaining" id="budgetRemaining"></div>
+                </div>
+                <span class="total-value" id="totalCostValue">$0.00</span>
+            </div>
+
+            <button class="clear-all-btn" id="clearAllBtn">🗑 Clear All</button>
+        </div>
+
+        <h2 style="color: #2c3e50; margin-bottom: 15px;">Monthly Price Breakdown</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Month</th>
+                    <th>Retail Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in entries %}
+                <tr>
+                    <td>{{ entry.month }}</td>
+                    <td class="price-cell">${{ "%.2f"|format(entry.price) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        var ctx = document.getElementById('priceChart').getContext('2d');
+
+        var months = [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ];
+
+        var prices = [
+            {% for entry in entries %}
+            {{ entry.price }}{% if not loop.last %}, {% endif %}
+            {% endfor %}
+        ];
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: [{
+                    label: '{{ name }} - Retail Price ($)',
+                    data: prices,
+                    borderColor: '#3498db',
+                    backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#3498db',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return '$' + context.parsed.y.toFixed(2);
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toFixed(2);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+    <!-- Price Calculator Script -->
+    <script>
+        (function() {
+            // Current medicine data
+            var currentMedicine = '{{ name }}';
+            var monthlyPrices = [
+                {% for entry in entries %}
+                {{ entry.price }}{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            ];
+            var monthNames = [
+                'January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'
+            ];
+
+            // DOM elements
+            var inflationToggle = document.getElementById('inflationToggle');
+            var startMonthSelect = document.getElementById('startMonth');
+            var endMonthSelect = document.getElementById('endMonth');
+            var quantityInput = document.getElementById('quantity');
+            var inflationRow = document.getElementById('inflationRow');
+            var inflationAdjustment = document.getElementById('inflationAdjustment');
+            var monthsInRangeEl = document.getElementById('monthsInRange');
+            var priceRangeEl = document.getElementById('priceRange');
+            var totalPriceEl = document.getElementById('totalPrice');
+            var qtyDisplay = document.getElementById('qtyDisplay');
+            var addToListBtn = document.getElementById('addToListBtn');
+            var shoppingListDiv = document.getElementById('shoppingList');
+            var emptyListMsg = document.getElementById('emptyListMsg');
+            var budgetInput = document.getElementById('budgetInput');
+            var totalRow = document.getElementById('totalRow');
+            var totalCostValue = document.getElementById('totalCostValue');
+            var budgetRemaining = document.getElementById('budgetRemaining');
+            var clearAllBtn = document.getElementById('clearAllBtn');
+
+            // Inflation rate: 0.6% compound monthly
+            var INFLATION_RATE = 0.006;
+
+            // Load shopping list from localStorage
+            function getShoppingList() {
+                try {
+                    var data = localStorage.getItem('medicineShoppingList');
+                    return data ? JSON.parse(data) : [];
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            // Save shopping list to localStorage
+            function saveShoppingList(list) {
+                try {
+                    localStorage.setItem('medicineShoppingList', JSON.stringify(list));
+                } catch (e) {
+                    console.error('Failed to save shopping list:', e);
+                }
+            }
+
+            // Load budget from localStorage
+            function getBudget() {
+                try {
+                    var budget = localStorage.getItem('medicineBudget');
+                    return budget ? parseFloat(budget) : 0;
+                } catch (e) {
+                    return 0;
+                }
+            }
+
+            // Save budget to localStorage
+            function saveBudget(budget) {
+                try {
+                    localStorage.setItem('medicineBudget', budget.toString());
+                } catch (e) {
+                    console.error('Failed to save budget:', e);
+                }
+            }
+
+            // Update end month options based on start month selection
+            function updateEndMonthOptions() {
+                var startIdx = parseInt(startMonthSelect.value);
+                var endIdx = parseInt(endMonthSelect.value);
+
+                // If end month is before start month, set end month to start month
+                if (endIdx < startIdx) {
+                    endMonthSelect.value = startIdx;
+                    endIdx = startIdx;
+                }
+
+                // Disable months before start month
+                for (var i = 0; i < endMonthSelect.options.length; i++) {
+                    if (i < startIdx) {
+                        endMonthSelect.options[i].disabled = true;
+                        endMonthSelect.options[i].style.color = '#555';
+                    } else {
+                        endMonthSelect.options[i].disabled = false;
+                        endMonthSelect.options[i].style.color = '#edf3f1';
+                    }
+                }
+            }
+
+            // Calculate price based on month range and quantity
+            function calculatePrice() {
+                var includeInflation = inflationToggle.value === 'yes';
+                var startIdx = parseInt(startMonthSelect.value);
+                var endIdx = parseInt(endMonthSelect.value);
+                var qtyPerMonth = parseInt(quantityInput.value) || 1;
+
+                if (qtyPerMonth < 1) qtyPerMonth = 1;
+                if (qtyPerMonth > 100) qtyPerMonth = 100;
+
+                // Ensure end month is not before start month
+                if (endIdx < startIdx) {
+                    endIdx = startIdx;
+                    endMonthSelect.value = startIdx;
+                }
+
+                // Calculate the range of months
+                var monthCount = endIdx - startIdx + 1;
+                var totalPrice = 0;
+                var minPrice = monthlyPrices[startIdx];
+                var maxPrice = monthlyPrices[startIdx];
+                var inflationTotal = 0;
+
+                for (var i = startIdx; i <= endIdx; i++) {
+                    var price = monthlyPrices[i];
+
+                    // Track min/max
+                    if (price < minPrice) minPrice = price;
+                    if (price > maxPrice) maxPrice = price;
+
+                    // Apply inflation if enabled
+                    var adjustedPrice = price;
+                    if (includeInflation) {
+                        // Compound inflation from the start month
+                        var monthsFromStart = i - startIdx;
+                        adjustedPrice = price * Math.pow(1 + INFLATION_RATE, monthsFromStart);
+                        inflationTotal += (adjustedPrice - price) * qtyPerMonth;
+                    }
+
+                    totalPrice += adjustedPrice * qtyPerMonth;
+                }
+
+                // Update UI
+                monthsInRangeEl.textContent = monthCount + ' month' + (monthCount > 1 ? 's' : '') + ' (' + monthNames[startIdx] + ' — ' + monthNames[endIdx] + ')';
+                priceRangeEl.textContent = '$' + minPrice.toFixed(2) + ' — $' + maxPrice.toFixed(2);
+                qtyDisplay.textContent = qtyPerMonth;
+                totalPriceEl.textContent = '$' + totalPrice.toFixed(2);
+
+                if (includeInflation && inflationTotal > 0) {
+                    inflationRow.style.display = 'flex';
+                    inflationAdjustment.textContent = '+$' + inflationTotal.toFixed(2);
+                } else {
+                    inflationRow.style.display = 'none';
+                }
+
+                return {
+                    total: totalPrice,
+                    qtyPerMonth: qtyPerMonth,
+                    startMonth: startIdx,
+                    endMonth: endIdx,
+                    monthCount: monthCount,
+                    inflation: includeInflation,
+                    minPrice: minPrice,
+                    maxPrice: maxPrice
+                };
+            }
+
+            // Render the shopping list
+            function renderShoppingList() {
+                var list = getShoppingList();
+
+                if (list.length === 0) {
+                    emptyListMsg.style.display = 'block';
+                    var items = shoppingListDiv.querySelectorAll('.summary-item');
+                    items.forEach(function(item) { item.remove(); });
+                    totalRow.style.display = 'none';
+                } else {
+                    emptyListMsg.style.display = 'none';
+
+                    var existingItems = shoppingListDiv.querySelectorAll('.summary-item');
+                    existingItems.forEach(function(item) { item.remove(); });
+
+                    list.forEach(function(item, index) {
+                        var div = document.createElement('div');
+                        div.className = 'summary-item';
+
+                        var details = item.qtyPerMonth + ' per month × ' + item.monthCount + ' month' + (item.monthCount > 1 ? 's' : '');
+                        details += ' (' + monthNames[item.startMonth] + ' — ' + monthNames[item.endMonth] + ')';
+
+                        div.innerHTML = '
+                            <div>
+                                <div class="summary-item-name">' + item.name + '</div>
+                                <div class="summary-item-details">' + details + '</div>
+                            </div>
+                            <span class="summary-item-price">$' + item.total.toFixed(2) + '</span>
+                            <button class="summary-item-remove" data-index="' + index + '">✕</button>
+                        ';
+
+                        shoppingListDiv.appendChild(div);
+                    });
+
+                    document.querySelectorAll('.summary-item-remove').forEach(function(btn) {
+                        btn.addEventListener('click', function() {
+                            var idx = parseInt(this.getAttribute('data-index'));
+                            var list = getShoppingList();
+                            list.splice(idx, 1);
+                            saveShoppingList(list);
+                            renderShoppingList();
+                        });
+                    });
+
+                    var total = 0;
+                    list.forEach(function(item) {
+                        total += item.total;
+                    });
+
+                    totalRow.style.display = 'flex';
+                    totalCostValue.textContent = '$' + total.toFixed(2);
+
+                    var budget = getBudget();
+                    if (budget > 0) {
+                        var remaining = budget - total;
+                        if (remaining >= 0) {
+                            budgetRemaining.textContent = '✅ $' + remaining.toFixed(2) + ' remaining';
+                            budgetRemaining.className = 'budget-remaining affordable';
+                            totalCostValue.className = 'total-value affordable';
+                        } else {
+                            budgetRemaining.textContent = '❌ $' + Math.abs(remaining).toFixed(2) + ' over budget';
+                            budgetRemaining.className = 'budget-remaining expensive';
+                            totalCostValue.className = 'total-value expensive';
+                        }
+                    } else {
+                        budgetRemaining.textContent = '';
+                        totalCostValue.className = 'total-value';
+                    }
+                }
+            }
+
+            // Add current medicine to shopping list
+            addToListBtn.addEventListener('click', function() {
+                var calc = calculatePrice();
+                var list = getShoppingList();
+
+                // Check if this medicine is already in the list, update if so
+                var found = false;
+                for (var i = 0; i < list.length; i++) {
+                    if (list[i].name === currentMedicine) {
+                        list[i] = {
+                            name: currentMedicine,
+                            total: calc.total,
+                            qtyPerMonth: calc.qtyPerMonth,
+                            startMonth: calc.startMonth,
+                            endMonth: calc.endMonth,
+                            monthCount: calc.monthCount,
+                            inflation: calc.inflation
+                        };
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    list.push({
+                        name: currentMedicine,
+                        total: calc.total,
+                        qtyPerMonth: calc.qtyPerMonth,
+                        startMonth: calc.startMonth,
+                        endMonth: calc.endMonth,
+                        monthCount: calc.monthCount,
+                        inflation: calc.inflation
+                    });
+                }
+
+                saveShoppingList(list);
+                renderShoppingList();
+            });
+
+            // Clear all button
+            clearAllBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to clear the entire shopping list?')) {
+                    localStorage.removeItem('medicineShoppingList');
+                    renderShoppingList();
+                }
+            });
+
+            // Budget input
+            budgetInput.addEventListener('input', function() {
+                var budget = parseFloat(this.value) || 0;
+                saveBudget(budget);
+                renderShoppingList();
+            });
+
+            // Recalculate on input change
+            inflationToggle.addEventListener('change', calculatePrice);
+            startMonthSelect.addEventListener('change', function() {
+                updateEndMonthOptions();
+                calculatePrice();
+            });
+            endMonthSelect.addEventListener('change', calculatePrice);
+            quantityInput.addEventListener('input', calculatePrice);
+
+            // Initialize
+            var savedBudget = getBudget();
+            if (savedBudget > 0) {
+                budgetInput.value = savedBudget;
+            }
+
+            updateEndMonthOptions();
+            calculatePrice();
+            renderShoppingList();
+        })();
+    </script>
+    <!-- Use Case Modal -->
+    <div class="use-case-modal-overlay" id="useCaseModal">
+        <div class="use-case-modal">
+            <button class="use-case-modal-close" id="useCaseClose">&times;</button>
+            <h3>Use Case — {{ name }}</h3>
+            <div id="useCaseContent">
+                <div class="use-case-loading">
+                    <div class="use-case-spinner"></div>
+                    <div class="use-case-loading-text">Fetching use case information...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Use Case Modal Logic
+        (function() {
+            var modal = document.getElementById('useCaseModal');
+            var btn = document.getElementById('useCaseBtn');
+            var closeBtn = document.getElementById('useCaseClose');
+            var content = document.getElementById('useCaseContent');
+            var medicineName = '{{ name }}';
+            var cached = null;
+
+            function openModal() {
+                modal.classList.add('active');
+                if (cached) {
+                    content.innerHTML = '<div class="use-case-modal-text">' + cached + '</div>';
+                    return;
+                }
+                // Show loading spinner
+                content.innerHTML = '<div class="use-case-loading"><div class="use-case-spinner"></div><div class="use-case-loading-text">Fetching use case information...</div></div>';
+                fetchUseCase();
+            }
+
+            function closeModal() {
+                modal.classList.remove('active');
+            }
+
+            function fetchUseCase() {
+                var encodedName = encodeURIComponent(medicineName);
+                fetch('/api/use-case/' + encodedName)
+                    .then(function(response) { return response.json(); })
+                    .then(function(data) {
+                        if (data.success) {
+                            cached = data.summary;
+                            content.innerHTML = '<div class="use-case-modal-text">' + data.summary + '</div>';
+                        } else {
+                            content.innerHTML = '<div class="use-case-modal-text use-case-error">⚠ ' + (data.error || 'Could not fetch use case information.') + '</div>';
+                        }
+                    })
+                    .catch(function(err) {
+                        content.innerHTML = '<div class="use-case-modal-text use-case-error">⚠ Failed to connect. Please try again.</div>';
+                    });
+            }
+
+            btn.addEventListener('click', openModal);
+            closeBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) closeModal();
+            });
+        })();
+    </script>
+</body>
+</html>
