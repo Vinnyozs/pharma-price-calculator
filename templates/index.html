@@ -9,6 +9,112 @@
         
           ::selection { background: transparent; }
 
+        :root {
+            --bg-color: #fdf6ec;
+            --text-color: #2c3e50;
+            --top-bar-bg: #2d7a4f;
+            --top-bar-border: #1a5c38;
+            --top-bar-text: #fdf6ec;
+            --top-bar-subtitle: #e8f5e9;
+            --container-bg: #ffffff;
+            --container-border: #2d7a4f;
+            --container-shadow: rgba(45, 122, 79, 0.15);
+            --card-bg: #fdf6ec;
+            --card-border: #2d7a4f;
+            --card-hover-border: #00cc44;
+            --card-hover-shadow: rgba(0, 204, 68, 0.15);
+            --card-hover-shadow2: rgba(0, 204, 68, 0.1);
+            --link-color: #2d7a4f;
+            --link-hover: #00cc44;
+            --price-color: #2d7a4f;
+            --price-range-color: #888;
+            --btn-bg: #2d7a4f;
+            --btn-border: #1a5c38;
+            --btn-text: #ffffff;
+            --search-bg: #ffffff;
+            --search-border: #2d7a4f;
+            --search-text: #2c3e50;
+            --search-focus: #00cc44;
+            --search-glow: rgba(0, 204, 68, 0.3);
+            --search-glow2: rgba(0, 204, 68, 0.15);
+            --sort-bg: #ffffff;
+            --sort-border: #2d7a4f;
+            --sort-text: #2c3e50;
+            --toggle-bg: #ffffff;
+            --toggle-text: #aaa;
+            --toggle-active-bg: #1a5c38;
+            --toggle-active-text: #ffffff;
+            --toggle-hover-bg: #e8f5e9;
+            --toggle-hover-text: #2d7a4f;
+            --highlight-color: #00cc44;
+            --highlight-shadow1: rgba(0, 204, 68, 0.4);
+            --highlight-shadow2: rgba(0, 204, 68, 0.2);
+            --no-results-color: #888;
+            --info-icon-color: #00cc44;
+            --tooltip-bg: #ffffff;
+            --tooltip-text: #2c3e50;
+            --tooltip-border: #2d7a4f;
+            --table-header-bg: #2d7a4f;
+            --table-header-text: #ffffff;
+            --table-border: #e0d5c7;
+            --table-hover: #fdf6ec;
+            --symptom-badge-color: #2d7a4f;
+            --chart-link-hover-shadow: rgba(0, 204, 68, 0.2);
+            --chart-link-hover-shadow2: rgba(0, 204, 68, 0.15);
+        }
+        [data-theme="dark"] {
+            --bg-color: #0c1013;
+            --text-color: #edf3f1;
+            --top-bar-bg: #141b20;
+            --top-bar-border: #1f292e;
+            --top-bar-text: #edf3f1;
+            --top-bar-subtitle: #aaa;
+            --container-bg: #141b20;
+            --container-border: #1f292e;
+            --container-shadow: rgba(0, 0, 0, 0.3);
+            --card-bg: #1a2329;
+            --card-border: #1f292e;
+            --card-hover-border: #6cb895;
+            --card-hover-shadow: rgba(108, 184, 149, 0.2);
+            --card-hover-shadow2: rgba(108, 184, 149, 0.1);
+            --link-color: #6cb895;
+            --link-hover: #8fd4b5;
+            --price-color: #6cb895;
+            --price-range-color: #aaa;
+            --btn-bg: #6cb895;
+            --btn-border: #548a71;
+            --btn-text: #ffffff;
+            --search-bg: #1a2329;
+            --search-border: #1f292e;
+            --search-text: #edf3f1;
+            --search-focus: #6cb895;
+            --search-glow: rgba(108, 184, 149, 0.3);
+            --search-glow2: rgba(108, 184, 149, 0.15);
+            --sort-bg: #1a2329;
+            --sort-border: #1f292e;
+            --sort-text: #edf3f1;
+            --toggle-bg: #1a2329;
+            --toggle-text: #aaa;
+            --toggle-active-bg: #6cb895;
+            --toggle-active-text: #ffffff;
+            --toggle-hover-bg: #1f292e;
+            --toggle-hover-text: #6cb895;
+            --highlight-color: #6cb895;
+            --highlight-shadow1: rgba(108, 184, 149, 0.4);
+            --highlight-shadow2: rgba(108, 184, 149, 0.2);
+            --no-results-color: #aaa;
+            --info-icon-color: #6cb895;
+            --tooltip-bg: #1a2329;
+            --tooltip-text: #edf3f1;
+            --tooltip-border: #1f292e;
+            --table-header-bg: #1f292e;
+            --table-header-text: #edf3f1;
+            --table-border: #1f292e;
+            --table-hover: #1a2329;
+            --symptom-badge-color: #6cb895;
+            --chart-link-hover-shadow: rgba(108, 184, 149, 0.2);
+            --chart-link-hover-shadow2: rgba(108, 184, 149, 0.15);
+        }
         * {
             margin: 0;
             padding: 0;
@@ -16,28 +122,120 @@
         }
         body {
             font-family: Arial, sans-serif;
-            background-color: #0c1013;
-            color: #edf3f1;
-            padding: 20px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 0;
+            margin: 0;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .theme-toggle-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            justify-content: flex-end;
+            margin-top: 4px;
+            padding-right: 30px;
+        }
+        .theme-label {
+            color: var(--top-bar-text);
+            font-size: 0.9em;
+            user-select: none;
+        }
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.4em;
+            color: var(--top-bar-text);
+            padding: 4px;
+            line-height: 1;
+            transition: transform 0.3s ease;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.15);
+        }
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--top-bar-bg);
+            border-bottom: 3px solid var(--top-bar-border);
+            padding: 4px 20px;
+            z-index: 1000;
+            box-shadow: 0 4px 13px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, border-bottom-color 0.3s ease;
+        }
+        .top-bar-inner {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .top-bar .logo {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+        }
+        .top-bar .logo img {
+            max-width: 80px;
+            max-height: 80px;
+            object-fit: contain;
+        }
+        .top-bar .title-text {
+            text-align: center;
+            color: var(--top-bar-text);
+            font-size: 1.5em;
+            font-weight: bold;
+            letter-spacing: 2px;
+            line-height: 1;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 8px;
+        }
+        .top-bar .title-slogan {
+            color: var(--top-bar-subtitle);
+            font-size: 0.5em;
+            font-weight: normal;
+            letter-spacing: 0;
+            line-height: 1;
+        }
+        .top-bar .subtitle {
+            text-align: center;
+            color: var(--top-bar-subtitle);
+            margin-bottom: 0;
+            font-size: 0.85em;
+        }
+        .top-bar .search-and-sort {
+            display: flex;
+            gap: 6px;
+            margin-top: 0;
+            margin-bottom: 0;
+            padding: 0;
+            align-items: center;
         }
         .container {
             max-width: 1000px;
             margin: 0 auto;
-            background-color: #141b20;
+            background-color: var(--container-bg);
             padding: 70px;
             border-radius: 50px;
-            border: 6px solid #1f292e;
+            border: 6px solid var(--container-border);
+            margin-top: 90px;
 
-            box-shadow: 0 4px 13px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 13px var(--container-shadow);
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
         }
         h1 {
-            color: #edf3f1;
+            color: var(--link-color);
             margin-bottom: 10px;
             text-align: center;
         }
         .subtitle {
             text-align: center;
-            color: #6cb895;
+            color: var(--link-color);
             margin-bottom: 30px;
             font-size: 0.95em;
         }
@@ -50,38 +248,68 @@
         .search-box {
             flex: 1;
             padding: 8px 14px;
-            border: 2px solid #1f292e;
+            border: 2px solid var(--search-border);
             border-radius: 10px;
             font-size: 0.9em;
             outline: none;
-            background-color: #1a2329;
-            color: #edf3f1;
-            transition: border-color 0.2s;
+            background-color: var(--search-bg);
+            color: var(--search-text);
+            transition: border-color 0.2s, background-color 0.3s ease, color 0.3s ease;
         }
         .search-box:focus {
-            border-color: #6cb895;
+            border-color: var(--search-focus);
+        }
+        .search-box:hover {
+            border-color: var(--search-focus);
+            box-shadow: 0 0 12px var(--search-glow), 0 0 24px var(--search-glow2);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
         .search-box::placeholder {
             color: #aaa;
         }
         .sort-select {
             padding: 8px 14px;
-            border: 2px solid #1f292e;
+            border: 2px solid var(--sort-border);
             border-radius: 10px;
             font-size: 0.9em;
             outline: none;
-            background-color: #1a2329;
-            color: #edf3f1;
+            background-color: var(--sort-bg);
+            color: var(--sort-text);
             cursor: pointer;
-            transition: border-color 0.2s;
+            transition: border-color 0.2s, background-color 0.3s ease, color 0.3s ease;
             white-space: nowrap;
         }
         .sort-select:focus {
-            border-color: #6cb895;
+            border-color: var(--search-focus);
         }
         .sort-select option {
-            background-color: #1a2329;
-            color: #edf3f1;
+            background-color: var(--sort-bg);
+            color: var(--sort-text);
+        }
+        .search-mode-toggle {
+            display: flex;
+            gap: 0;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid var(--toggle-bg);
+        }
+        .search-mode-btn {
+            padding: 8px 14px;
+            border: none;
+            font-size: 0.9em;
+            cursor: pointer;
+            background-color: var(--toggle-bg);
+            color: var(--toggle-text);
+            transition: background-color 0.2s, color 0.2s;
+            outline: none;
+        }
+        .search-mode-btn.active {
+            background-color: var(--toggle-active-bg);
+            color: var(--toggle-active-text);
+        }
+        .search-mode-btn:hover:not(.active) {
+            background-color: var(--toggle-hover-bg);
+            color: var(--toggle-hover-text);
         }
         .medicine-grid {
             display: flex;
@@ -94,15 +322,15 @@
             justify-content: space-between;
             padding: 20px 25px;
             border-radius: 20px;
-            background-color: #1a2329;
-            border: 3px solid #1f292e;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            background-color: var(--card-bg);
+            border: 3px solid var(--card-border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
             cursor: default;
         }
         .medicine-card:hover {
             transform: scale(1.03);
-            box-shadow: 0 8px 25px rgba(108, 184, 149, 0.15);
-            border-color: #6cb895;
+            box-shadow: 0 8px 25px var(--card-hover-shadow), 0 0 15px var(--card-hover-shadow2);
+            border-color: var(--card-hover-border);
         }
         .medicine-info {
             flex: 1;
@@ -113,11 +341,11 @@
             margin-bottom: 6px;
         }
         .medicine-link {
-            color: #edf3f1;
+            color: var(--link-color);
             text-decoration: none;
         }
         .medicine-link:hover {
-            color: #6cb895;
+            color: var(--link-hover);
         }
         .medicine-stats {
             display: flex;
@@ -128,72 +356,147 @@
         .avg-price {
             font-size: 1.3em;
             font-weight: bold;
-            color: #6cb895;
+            color: var(--price-color);
         }
         .price-range {
             font-size: 0.9em;
-            color: #aaa;
+            color: var(--price-range-color);
         }
         .chart-link {
-            background-color: #6cb895;
-            color: #ffffff;
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
             padding: 8px 16px;
             border-radius: 8px;
-            border: 2px solid #548a71;
+            border: 2px solid var(--btn-border);
             text-decoration: none;
             font-size: 0.9em;
             display: inline-block;
             white-space: nowrap;
-              transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
         }
         .chart-link:hover {
-
-             transform: scale(1.08);
-            box-shadow: 0 8px 25px rgba(108, 184, 149, 0.15);
+            transform: scale(1.08);
+            box-shadow: 0 8px 25px var(--chart-link-hover-shadow), 0 0 15px var(--chart-link-hover-shadow2);
         }
         .no-results {
             text-align: center;
-            color: #7f8c8d;
+            color: var(--no-results-color);
             padding: 20px;
             font-style: italic;
             display: none;
         }
         .search-highlight {
-            color: #6cb895;
-            text-shadow: 0 0 8px rgba(108, 184, 149, 0.8), 0 0 16px rgba(108, 184, 149, 0.4);
+            color: var(--highlight-color);
+            text-shadow: 0 0 8px var(--highlight-shadow1), 0 0 16px var(--highlight-shadow2);
             transition: text-shadow 0.2s ease;
+        }
+        .symptom-match-badge {
+            display: inline-block;
+            font-size: 0.8em;
+            color: var(--symptom-badge-color);
+            margin-top: 4px;
+            font-style: italic;
+        }
+        .last-updated-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 0;
+            flex-wrap: wrap;
+        }
+        .tooltip-container {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+        }
+        .info-icon {
+            color: var(--info-icon-color);
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .tooltip-text {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--tooltip-bg);
+            color: var(--tooltip-text);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 2px solid var(--tooltip-border);
+            font-size: 0.8em;
+            font-weight: normal;
+            white-space: nowrap;
+            z-index: 9999;
+            transition: opacity 0.2s ease, visibility 0.2s ease, background-color 0.3s ease, color 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        .tooltip-container:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Average Prices for Medicines</h1>
-        <p class="subtitle">Average retail prices from January to December — {{ nadac_found }}/{{ nadac_total }} medicines sourced from CMS NADAC</p>
-        <p class="subtitle" style="font-size: 0.85em; color: #888; margin-top: -15px; margin-bottom: 25px;">Last updated: {{ data_date }}</p>
+    <div class="top-bar">
+        <div class="top-bar-inner">
+            <div class="theme-toggle-wrapper">
+                <span class="theme-label">Theme:</span>
+                <button type="button" class="theme-toggle" id="themeToggle" title="Toggle dark mode">☀️</button>
+            </div>
 
-        <div class="search-and-sort">
-            <input type="text" id="searchInput" class="search-box" placeholder="Search medicines...">
-            <select id="sortSelect" class="sort-select">
-                <option value="default">Sort by</option>
-                <option value="alpha" selected>Alphabetical</option>
-                <option value="highest">Highest Price</option>
-                <option value="lowest">Lowest Price</option>
-            </select>
+            <div class="title-text">
+                <span>MEDCALC</span>
+                <span class="title-slogan">DOING THE CALCULATING FOR YOU</span>
+            </div>
+
+            <div class="search-and-sort">
+                <div class="logo">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+                </div>
+                <div class="search-mode-toggle">
+                    <button type="button" class="search-mode-btn active" data-mode="name" onclick="setSearchMode('name')">Name</button>
+                    <button type="button" class="search-mode-btn" data-mode="symptom" onclick="setSearchMode('symptom')">Symptom</button>
+                </div>
+                <input type="text" id="searchInput" class="search-box" placeholder="Search medicines...">
+                <select id="sortSelect" class="sort-select">
+                    <option value="alpha" selected>Alphabetical</option>
+                    <option value="highest">Highest Price</option>
+                    <option value="lowest">Lowest Price</option>
+                </select>
+            </div>
+
+            <div class="last-updated-row">
+                <p class="subtitle" style="font-size: 0.85em; color: var(--top-bar-subtitle); margin: 0;">All {{ nadac_total }} medicines sourced from CMS NADAC</p>
+                <p class="subtitle" style="font-size: 0.8em; margin: 0;">
+                    <a href="https://data.medicaid.gov/" target="_blank" rel="noopener" style="color: var(--top-bar-subtitle); text-decoration: underline; text-decoration-thickness: 1px; cursor: pointer;">Sources</a>
+                </p>
+                <p class="subtitle" style="font-size: 0.8em; color: var(--price-range-color); margin: 0;">Last updated: {{ data_date }}</p>
+                <div class="tooltip-container">
+                    <span class="info-icon">*</span>
+                    <div class="tooltip-text">Average retail prices per gram from January to December</div>
+                </div>
+            </div>
         </div>
+    </div>
 
+    <div class="container">
         <div class="medicine-grid" id="medicineGrid">
                 {% for avg in averages %}
-            <div class="medicine-card medicine-row">
+            <div class="medicine-card medicine-row" data-symptoms="{{ avg.symptoms | join(',') }}">
                 <div class="medicine-info">
                     <div class="medicine-name">
                         <a href="/medicine/{{ loop.index - 1 }}" class="medicine-link">{{ avg.name }}</a>
                     </div>
                     <span class="price-range">
-                        ${{ "%.2f"|format(avg.min_price) }} — ${{ "%.2f"|format(avg.max_price) }}
+                        ${{ "%.2f"|format(avg.min_price) }}/g — ${{ "%.2f"|format(avg.max_price) }}/g
                     </span>
                 </div>
                 <div class="medicine-stats">
-                    <span class="avg-price">${{ "%.2f"|format(avg.average_price) }}</span>
+                    <span class="avg-price">${{ "%.2f"|format(avg.average_price) }}/g</span>
                 </div>
                 <a href="/medicine/{{ loop.index - 1 }}" class="chart-link">View chart</a>
             </div>
@@ -203,41 +506,84 @@
     </div>
 
     <script>
-        // Store original medicine names so we can reset highlighting
-        var originalNames = {};
-        document.querySelectorAll('.medicine-link').forEach(function(link) {
-            var key = Array.from(document.querySelectorAll('.medicine-link')).indexOf(link);
-            originalNames[key] = link.textContent;
-        });
+        // Theme toggle
+        (function() {
+            var toggle = document.getElementById('themeToggle');
+            var savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                toggle.textContent = '🌙';
+            }
+            toggle.addEventListener('click', function() {
+                var current = document.documentElement.getAttribute('data-theme');
+                if (current === 'dark') {
+                    document.documentElement.removeAttribute('data-theme');
+                    localStorage.setItem('theme', 'light');
+                    toggle.textContent = '☀️';
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                    toggle.textContent = '🌙';
+                }
+            });
+        })();
 
+        // Search mode: 'name' or 'symptom'
+        var searchMode = 'name';
+
+        function setSearchMode(mode) {
+            searchMode = mode;
+            document.querySelectorAll('.search-mode-btn').forEach(function(btn) {
+                btn.classList.toggle('active', btn.getAttribute('data-mode') === mode);
+            });
+            var searchInput = document.getElementById('searchInput');
+            if (mode === 'name') {
+                searchInput.placeholder = 'Search medicines...';
+            } else {
+                searchInput.placeholder = 'Search by symptom or condition...';
+            }
+            // Re-trigger search with current query
+            searchInput.dispatchEvent(new Event('input'));
+        }
+
+        // Store original medicine names and symptoms directly on each row element
+        // This way, sorting doesn't break the association between rows and their data
         var grid = document.getElementById('medicineGrid');
         var rows = Array.from(document.querySelectorAll('.medicine-row'));
+
+        rows.forEach(function(row) {
+            var link = row.querySelector('.medicine-link');
+            row._originalName = link.textContent; // attach data to the row itself
+            var symptomsAttr = row.getAttribute('data-symptoms');
+            row._symptoms = symptomsAttr ? symptomsAttr.toLowerCase().split(',') : [];
+        });
 
         // Sort functionality
         function sortMedicines(sortBy) {
             if (sortBy === 'default') {
-                // Reset to original order by re-reading from the page structure
-                // We just reverse any sorting by keeping DOM order
                 return;
             }
 
             var sortedRows = rows.slice();
             if (sortBy === 'alpha') {
                 sortedRows.sort(function(a, b) {
-                    var nameA = a.querySelector('.medicine-link').textContent.trim().toLowerCase();
-                    var nameB = b.querySelector('.medicine-link').textContent.trim().toLowerCase();
-                    return nameA.localeCompare(nameB);
+                    return a._originalName.trim().toLowerCase()
+                        .localeCompare(b._originalName.trim().toLowerCase());
                 });
             } else if (sortBy === 'highest') {
                 sortedRows.sort(function(a, b) {
-                    var priceA = parseFloat(a.querySelector('.avg-price').textContent.replace('$', '').replace(',', ''));
-                    var priceB = parseFloat(b.querySelector('.avg-price').textContent.replace('$', '').replace(',', ''));
+                    var priceA = parseFloat(a.querySelector('.avg-price').textContent
+                        .replace('$', '').replace(',', ''));
+                    var priceB = parseFloat(b.querySelector('.avg-price').textContent
+                        .replace('$', '').replace(',', ''));
                     return priceB - priceA;
                 });
             } else if (sortBy === 'lowest') {
                 sortedRows.sort(function(a, b) {
-                    var priceA = parseFloat(a.querySelector('.avg-price').textContent.replace('$', '').replace(',', ''));
-                    var priceB = parseFloat(b.querySelector('.avg-price').textContent.replace('$', '').replace(',', ''));
+                    var priceA = parseFloat(a.querySelector('.avg-price').textContent
+                        .replace('$', '').replace(',', ''));
+                    var priceB = parseFloat(b.querySelector('.avg-price').textContent
+                        .replace('$', '').replace(',', ''));
                     return priceA - priceB;
                 });
             }
@@ -247,7 +593,7 @@
                 grid.appendChild(row);
             });
 
-            // Update rows array to reflect new order
+            // Update rows array to reflect new DOM order
             rows = Array.from(document.querySelectorAll('.medicine-row'));
         }
 
@@ -258,23 +604,36 @@
         // Sort alphabetically on page load
         sortMedicines('alpha');
 
+        // Search functionality
         document.getElementById('searchInput').addEventListener('input', function() {
             var query = this.value.toLowerCase().trim();
             var currentRows = document.querySelectorAll('.medicine-row');
             var visibleCount = 0;
-            var linkIndex = 0;
+
             currentRows.forEach(function(row) {
                 var link = row.querySelector('.medicine-link');
-                var name = originalNames[linkIndex] || link.textContent;
+                var name = row._originalName; // use data attached to the row
                 var nameLower = name.toLowerCase();
-                linkIndex++;
+                var symptoms = row._symptoms;
 
-                if (query === '' || nameLower.indexOf(query) !== -1) {
+                var matches = false;
+                if (query === '') {
+                    matches = true;
+                } else if (searchMode === 'name') {
+                    matches = nameLower.indexOf(query) !== -1;
+                } else {
+                    // Symptom mode: search through symptom keywords
+                    matches = symptoms.some(function(s) {
+                        return s.indexOf(query) !== -1;
+                    });
+                }
+
+                if (matches) {
                     row.style.display = '';
                     visibleCount++;
 
-                    // Highlight matching characters
-                    if (query.length > 0) {
+                    // Highlight matching characters in the medicine name
+                    if (query.length > 0 && searchMode === 'name') {
                         var highlighted = '';
                         var searchIdx = 0;
                         for (var i = 0; i < name.length; i++) {
@@ -282,7 +641,6 @@
                                 highlighted += '<span class="search-highlight">' + name[i] + '</span>';
                                 searchIdx++;
                                 if (searchIdx === query.length) {
-                                    // Rest of the name without highlighting
                                     highlighted += name.substring(i + 1);
                                     break;
                                 }
@@ -291,16 +649,42 @@
                             }
                         }
                         link.innerHTML = highlighted;
-                    } else {
-                        // Reset to plain text when search is cleared
+                    } else if (query.length > 0 && searchMode === 'symptom') {
+                        // In symptom mode, show which symptom matched
                         link.textContent = name;
+                        var existingBadge = row.querySelector('.symptom-match-badge');
+                        if (existingBadge) existingBadge.remove();
+
+                        var matchedSymptom = symptoms.find(function(s) {
+                            return s.indexOf(query) !== -1;
+                        });
+                        if (matchedSymptom) {
+                            var badge = document.createElement('span');
+                            badge.className = 'symptom-match-badge';
+                            var symIdx = matchedSymptom.indexOf(query);
+                            var highlightedSymptom = matchedSymptom.substring(0, symIdx) +
+                                '<span class="search-highlight">' +
+                                matchedSymptom.substring(symIdx, symIdx + query.length) +
+                                '</span>' +
+                                matchedSymptom.substring(symIdx + query.length);
+                            badge.innerHTML = '✓ ' + highlightedSymptom;
+                            row.querySelector('.medicine-info').appendChild(badge);
+                        }
+                    } else {
+                        link.textContent = name;
+                        var existingBadge = row.querySelector('.symptom-match-badge');
+                        if (existingBadge) existingBadge.remove();
                     }
                 } else {
                     row.style.display = 'none';
-                    link.textContent = name; // Reset highlighting on hidden rows
+                    link.textContent = name;
+                    var existingBadge = row.querySelector('.symptom-match-badge');
+                    if (existingBadge) existingBadge.remove();
                 }
             });
-            document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
+
+            document.getElementById('noResults').style.display =
+                visibleCount === 0 ? 'block' : 'none';
         });
 
 

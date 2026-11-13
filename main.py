@@ -35,6 +35,7 @@ def load_medicine_data():
             medicines.append({
                 "name": name,
                 "prices": data["monthly_prices"],
+                "symptoms": data.get("symptoms", []),
             })
             nadac_total += 1
             if data.get("source") == "NADAC/CMS":
@@ -75,7 +76,8 @@ def calculate_averages():
             'average_price': round(avg_price, 2),
             'min_price': round(min_price, 2),
             'max_price': round(max_price, 2),
-            'entries': price_entries
+            'entries': price_entries,
+            'symptoms': medicine.get('symptoms', []),
         })
     return averages
 
@@ -91,16 +93,18 @@ def home():
 @app.route('/medicine/<int:index>')
 def medicine_chart(index):
     if index < 0 or index >= len(top_medicines):
-        return render_template('404.html'), 404
+        return "<h1>Medicine not found</h1><p>The requested medicine index is invalid.</p>", 404
     medicine = top_medicines[index]
     prices = medicine['prices']
     avg_price = sum(prices) / len(prices)
     min_price = min(prices)
     max_price = max(prices)
+
     price_entries = [
         {'month': months[i], 'price': prices[i]}
         for i in range(12)
     ]
+
     return render_template(
         'chart.html',
         name=medicine['name'],
@@ -115,21 +119,26 @@ def medicine_chart(index):
 
 @app.route('/api/use-case/<path:medicine_name>')
 def get_use_case(medicine_name):
-    """Fetch a brief use case summary for a medicine using Wikipedia API."""
+    """
+    Fetch a brief use-case summary for a medicine from Wikipedia.
+    Returns plain text (up to ~5 sentences) about the drug's purpose.
+    """
     from urllib.parse import unquote
+
     medicine_name = unquote(medicine_name)
-    
-    # Clean up the medicine name for search (remove parentheticals for search)
+
+    # Strip parenthetical notes for a cleaner Wikipedia search
+    # e.g., "Paracetamol (Acetaminophen)" -> "Paracetamol"
     search_name = re.sub(r'\s*\(.*?\)', '', medicine_name).strip()
-    
+
     headers = {
         'User-Agent': 'MedicinePriceApp/1.0 (educational project)'
     }
-    
+    search_url = "https://en.wikipedia.org/w/api.php"
+
     try:
-        # Step 1: Search Wikipedia for the medicine
-        search_url = "https://en.wikipedia.org/w/api.php"
-        params = {
+        # Step 1: Search Wikipedia for the medicine name
+        search_params = {
             'action': 'query',
             'list': 'search',
             'srsearch': search_name,
@@ -137,18 +146,22 @@ def get_use_case(medicine_name):
             'format': 'json',
             'srnamespace': 0,
         }
-        
-        response = requests.get(search_url, params=params, headers=headers, timeout=10)
+
+        response = requests.get(search_url, params=search_params,
+                                headers=headers, timeout=10)
         response.raise_for_status()
         data = response.json()
-        
-        # Check if we found a matching article
-        if 'query' not in data or 'search' not in data['query'] or not data['query']['search']:
-            return jsonify({"success": False, "error": "No information found for this medicine."}), 404
-        
+
+        # Check if Wikipedia returned a matching article
+        if not data.get('query', {}).get('search'):
+            return jsonify({
+                "success": False,
+                "error": "No information found for this medicine."
+            }), 404
+
         title = data['query']['search'][0]['title']
-        
-        # Step 2: Get the extract/summary of the article
+
+        # Step 2: Fetch the article's introduction (plain text)
         extract_params = {
             'action': 'query',
             'titles': title,
@@ -158,29 +171,37 @@ def get_use_case(medicine_name):
             'exsentences': 5,
             'format': 'json',
         }
-        
-        extract_response = requests.get(search_url, params=extract_params, headers=headers, timeout=10)
+
+        extract_response = requests.get(search_url, params=extract_params,
+                                        headers=headers, timeout=10)
         extract_response.raise_for_status()
         extract_data = extract_response.json()
-        
+
         pages = extract_data.get('query', {}).get('pages', {})
         page = next(iter(pages.values()))
         extract = page.get('extract', '')
-        
+
         if extract:
-            # Clean up the extract
+            # Clean up whitespace and truncate to ~500 chars
             extract = re.sub(r'\s+', ' ', extract).strip()
             if len(extract) > 500:
                 extract = extract[:500].rsplit('.', 1)[0] + '.'
             return jsonify({"success": True, "summary": extract})
-        
-        return jsonify({"success": False, "error": "Could not fetch use case information for this medicine."}), 404
-                
+
+        return jsonify({
+            "success": False,
+            "error": "Could not fetch use case information for this medicine."
+        }), 404
+
     except requests.exceptions.Timeout:
-        return jsonify({"success": False, "error": "Request timed out. Please try again."}), 500
+        return jsonify({
+            "success": False,
+            "error": "Request timed out. Please try again."
+        }), 500
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
 
 if __name__ == '__main__':
+    # Run the Flask app on all interfaces, port 8000
     app.run(host='0.0.0.0', port=8000, debug=False)

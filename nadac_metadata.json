@@ -1,9 +1,10 @@
 {
-  "fetch_date": "2026-11-05T18:59:41.284764",
-  "total_medicines": 202,
-  "found_in_nadac": 169,
-  "fallback_estimates": 33,
+  "fetch_date": "2026-11-13T16:58:38.920187",
+  "total_medicines": 296,
+  "found_in_nadac": 296,
+  "not_found_in_nadac": 115,
   "source": "CMS NADAC via download.medicaid.gov CSV",
   "retail_markup": "30% applied to NADAC wholesale prices",
-  "csv_records": 1328578
+  "csv_records": 1358735,
+  "price_unit": "dollars_per_gram"
 }
